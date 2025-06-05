@@ -1,4 +1,4 @@
-# 🤖 R2-D2 Morse Code Translator
+#  R2-D2 Morse Code Translator
 
 A Star Wars–inspired web-based **Morse Code Translator** that lets users convert between regular text and Morse code—and vice versa! Built with **HTML**, **CSS**, and **Vanilla JavaScript**, this app is styled like a rebel console and ready to decode secret messages from a galaxy far, far away.
 
@@ -18,7 +18,7 @@ A Star Wars–inspired web-based **Morse Code Translator** that lets users conve
 
 ---
 
-## 🧰 Tech Stack
+##  Tech Stack
 
 - **HTML5** – Semantic structure  
 - **CSS3** – Styling
@@ -31,28 +31,20 @@ A Star Wars–inspired web-based **Morse Code Translator** that lets users conve
 1. Clone or download the repository:
    ```bash
    git clone https://github.com/LutendoMuthala/morse-code.git
-   cd r2d2-morse-translator
+   cd morse-code
    ```
-
-2. Open the `index.html` file in your browser:
-   - Double-click the file **or**
-   - Right-click → Open with browser
-
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
-r2d2-morse-code/
+morse-code/
 ├── index.html     # Main UI + embedded JS logic     
 └── README.md      
-```
-
-> 💡 All code is inlined in `index.html` for easy portability.
-
+`
 ---
 
-## 🧪 Built-In Diagnostics
+##  Built-In Diagnostics
 
 Click the **"Run R2-D2 Diagnostics"** button to run unit tests directly in the browser.  
 Tests include:
@@ -62,7 +54,7 @@ Tests include:
 
 ---
 
-## ✨ UI Preview
+##  UI Preview
 
 - Green-glow terminal style
 - Styled buttons with hover effects
