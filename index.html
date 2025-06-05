@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 R2-D2 Morse Code Translator</title>
+    <script src="index.js"></script>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(135deg, #0c0c0c, #1a1a2e, #16213e);
+            color: #00ff41;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0, 255, 65, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #00ff41;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: #000;
+            color: #00ff41;
+            border: 1px solid #00ff41;
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: all 0.3s;
+        }
+        
+        button:hover {
+            background: #00cc33;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.5);
+        }
+        
+        .output {
+            background: #000;
+            color: #00ff41;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #00ff41;
+            min-height: 50px;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+        
+        .examples {
+            background: rgba(0, 100, 200, 0.1);
+            border-left-color: #0066cc;
+        }
+        
+        .example-btn {
+            background: #0066cc;
+            font-size: 12px;
+            padding: 8px 16px;
+        }
+        
+        .example-btn:hover {
+            background: #0080ff;
+        }
+        
+        .status {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            text-shadow: 0 0 5px #00ff41;
+        }
+        
+        .beep {
+            animation: blink 0.5s ease-in-out;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 R2-D2 MORSE CODE TRANSLATOR 🤖</h1>
+        <div class="status">🌟 Systems Online - Ready for Secret Communications! 🌟</div>
+        
+        <div class="section">
+            <h3>📤 ENCODE: Text → Morse Code</h3>
+            <textarea id="textInput" placeholder="Enter your secret message here... (e.g., Help me Obi-Wan!)"></textarea>
+            <br>
+            <button onclick="encodeMessage()">🔒 Encode to Morse</button>
+            <button onclick="clearInputs()">🗑️ Clear</button>
+            <div class="output" id="encodedOutput">Encoded morse code will appear here...</div>
+        </div>
+        
+        <div class="section">
+            <h3>📥 DECODE: Morse Code → Text</h3>
+            <textarea id="morseInput" placeholder="Enter morse code here... (e.g., .... . .-.. .--. / -- .)"></textarea>
+            <br>
+            <button onclick="decodeMessage()">🔓 Decode from Morse</button>
+            <button onclick="clearInputs()">🗑️ Clear</button>
+            <div class="output" id="decodedOutput">Decoded message will appear here...</div>
+        </div>
+        <div class="section">
+            <h3>🧪 Diagnostic Tests</h3>
+            <button onclick="runTests()">🔧 Run R2-D2 Diagnostics</button>
+            <div class="output" id="testOutput">Click to run system diagnostics...</div>
+        </div>
+    </div>
+
+    <script>
+        // R2-D2's Morse Code Dictionary
+        const MORSE_CODE_MAP = {
+            'A': '.-',    'B': '-...',  'C': '-.-.',  'D': '-..',   'E': '.',
+            'F': '..-.',  'G': '--.',   'H': '....',  'I': '..',    'J': '.---',
+            'K': '-.-',   'L': '.-..',  'M': '--',    'N': '-.',    'O': '---',
+            'P': '.--.',  'Q': '--.-',  'R': '.-.',   'S': '...',   'T': '-',
+            'U': '..-',   'V': '...-',  'W': '.--',   'X': '-..-',  'Y': '-.--',
+            'Z': '--..',
+            '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-',
+            '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.',
+            '.': '.-.-.-', ',': '--..--', '?': '..--..', "'": '.----.', 
+            '!': '-.-.--', '/': '-..-.', '(': '-.--.', ')': '-.--.-',
+            '&': '.-...', ':': '---...', ';': '-.-.-.', '=': '-...-',
+            '+': '.-.-.', '-': '-....-', '_': '..--.-', '"': '.-..-.',
+            '$': '...-..-', '@': '.--.-.'
+        };
+
+        const REVERSE_MORSE_MAP = Object.fromEntries(
+            Object.entries(MORSE_CODE_MAP).map(([key, value]) => [value, key])
+        );
+
+        function lettersToMorseCode(text) {
+            if (!text || typeof text !== 'string') return '';
+            
+            const upperText = text.toUpperCase();
+            const morseArray = [];
+            
+            for (let char of upperText) {
+                if (char === ' ') {
+                    morseArray.push('/');
+                } else if (MORSE_CODE_MAP[char]) {
+                    morseArray.push(MORSE_CODE_MAP[char]);
+                }
+            }
+            
+            return morseArray.join(' ');
+        }
+
+        function morseCodeToLetters(morseCode) {
+            if (!morseCode || typeof morseCode !== 'string') return '';
+            
+            const cleanMorse = morseCode.trim();
+            if (!cleanMorse) return '';
+            
+            const words = cleanMorse.split(' / ');
+            const decodedWords = [];
+            
+            for (let word of words) {
+                if (!word.trim()) continue;
+                
+                const morseChars = word.trim().split(' ');
+                const decodedChars = [];
+                
+                for (let morseChar of morseChars) {
+                    if (morseChar && REVERSE_MORSE_MAP[morseChar]) {
+                        decodedChars.push(REVERSE_MORSE_MAP[morseChar]);
+                    } else if (morseChar) {
+                        decodedChars.push('?');
+                    }
+                }
+                
+                if (decodedChars.length > 0) {
+                    decodedWords.push(decodedChars.join(''));
+                }
+            }
+            
+            return decodedWords.join(' ');
+        }
+
+        function encodeMessage() {
+            const input = document.getElementById('textInput').value;
+            const output = document.getElementById('encodedOutput');
+            
+            if (!input.trim()) {
+                output.textContent = '⚠️ R2-D2 needs a message to encode!';
+                return;
+            }
+            
+            const result = lettersToMorseCode(input);
+            output.textContent = result || '❌ Could not encode message';
+            output.classList.add('beep');
+            setTimeout(() => output.classList.remove('beep'), 500);
+        }
+
+        function decodeMessage() {
+            const input = document.getElementById('morseInput').value;
+            const output = document.getElementById('decodedOutput');
+            
+            if (!input.trim()) {
+                output.textContent = '⚠️ R2-D2 needs morse code to decode!';
+                return;
+            }
+            
+            const result = morseCodeToLetters(input);
+            output.textContent = result || '❌ Could not decode message';
+            output.classList.add('beep');
+            setTimeout(() => output.classList.remove('beep'), 500);
+        }
+
+        function clearInputs() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('morseInput').value = '';
+            document.getElementById('encodedOutput').textContent = 'Encoded morse code will appear here...';
+            document.getElementById('decodedOutput').textContent = 'Decoded message will appear here...';
+        }
+
+        function loadExample(type) {
+            const examples = {
+                help: {
+                    text: "Help me Obi-Wan!",
+                    morse: ".... . .-.. .--. / -- . / --- -... .. -....- .-- .- -. -.-.--"
+                },
+                coffee: {
+                    text: "I AM RUNNING OUT OF COFFEE",
+                    morse: ".. / .- -- / .-. ..- -. -. .. -. --. / --- ..- - / --- ..-. / -.-. --- ..-. ..-. . ."
+                },
+                force: {
+                    text: "May the Force be with you",
+                    morse: "-- .- -.-- / - .... . / ..-. --- .-. -.-. . / -... . / .-- .. - .... / -.-- --- ..-"
+                },
+                droid: {
+                    text: "BEEP BOOP R2-D2 ONLINE",
+                    morse: "-... . . .--. / -... --- --- .--. / .-. ..--- -....- -.. ..--- / --- -. .-.. .. -. ."
+                }
+            };
+
+            const example = examples[type];
+            document.getElementById('textInput').value = example.text;
+            document.getElementById('morseInput').value = example.morse;
+        }
+
+        function runTests() {
+            const output = document.getElementById('testOutput');
+            output.textContent = '🔧 Running R2-D2 diagnostics...\n';
+            
+            const tests = [
+                { name: 'Basic Encoding', input: 'HELLO', expected: '.... . .-.. .-.. ---', func: lettersToMorseCode },
+                { name: 'Basic Decoding', input: '.... . .-.. .-.. ---', expected: 'HELLO', func: morseCodeToLetters },
+                { name: 'Emergency Message', input: 'SOS', expected: '... --- ...', func: lettersToMorseCode },
+                { name: 'Numbers Test', input: '123', expected: '.---- ..--- ...--', func: lettersToMorseCode }
+            ];
+            
+            let results = '';
+            let passed = 0;
+            
+            tests.forEach(test => {
+                const result = test.func(test.input);
+                if (result === test.expected) {
+                    results += `✅ ${test.name}: PASSED\n`;
+                    passed++;
+                } else {
+                    results += `❌ ${test.name}: FAILED\n`;
+                    results += `   Expected: "${test.expected}"\n`;
+                    results += `   Got: "${result}"\n`;
+                }
+            });
+            
+            results += `\n🎯 Results: ${passed}/${tests.length} tests passed\n`;
+            results += passed === tests.length ? '🎉 ALL SYSTEMS OPERATIONAL!' : '⚠️ Some systems need attention!';
+            
+            output.textContent = results;
+        }
+
+        // Welcome message
+        console.log('🤖 R2-D2 Morse Translator loaded! Try the functions in the console too!');
+        console.log(' lettersToMorseCode("Hello World!")');
+    </script>
+</body>
+</html>
