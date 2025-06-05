@@ -4,6 +4,9 @@ A Star Wars–inspired web-based **Morse Code Translator** that lets users conve
 
 ---
 
+## Live Demo
+https://lutendomuthala.github.io/Morse-code/
+
 ## 🚀 Features
 
 - **Encode** text into Morse code
