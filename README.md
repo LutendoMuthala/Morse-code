@@ -41,10 +41,8 @@ A Star Wars–inspired web-based **Morse Code Translator** that lets users conve
 morse-code/
 ├── index.html     # Main UI + embedded JS logic     
 └── README.md      
-`
----
-
-##  Built-In Diagnostics
+```
+## Built-In Diagnostics
 
 Click the **"Run R2-D2 Diagnostics"** button to run unit tests directly in the browser.  
 Tests include:
@@ -52,13 +50,5 @@ Tests include:
 - Emergency messages
 - Numeric translations
 
----
+  
 
-##  UI Preview
-
-- Green-glow terminal style
-- Styled buttons with hover effects
-- Animated "beep" feedback on output
-- Status display indicating system readiness
-
----
